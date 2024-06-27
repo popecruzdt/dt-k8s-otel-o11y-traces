@@ -34,16 +34,6 @@ spec:
         send_batch_max_size: 1000
         timeout: 30s
         send_batch_size: 800
-      resource:
-        attributes:
-        - key: k8s.pod.ip
-          action: delete
-        - key: telemetry.sdk.name
-          value: opentelemetry
-          action: insert
-        - key: dynatrace.otel.collector
-          value: dynatrace-traces
-          action: insert
       k8sattributes:
         auth_type: "serviceAccount"
         passthrough: false
@@ -75,6 +65,20 @@ spec:
           #      name: k8s.pod.ip
           - sources:
               - from: connection
+      resourcedetection/gcp:
+        detectors: [env, gcp]
+        timeout: 2s
+        override: false
+      resource:
+        attributes:
+        - key: k8s.pod.ip
+          action: delete
+        - key: telemetry.sdk.name
+          value: opentelemetry
+          action: insert
+        - key: dynatrace.otel.collector
+          value: dynatrace-traces
+          action: insert
 
     exporters:
       otlphttp/dynatrace:
@@ -95,13 +99,5 @@ spec:
       pipelines:
         traces:
           receivers: [otlp]
-          processors: [resource,k8sattributes,batch]
+          processors: [k8sattributes,resourcedetection/gcp,resource,batch]
           exporters: [otlphttp/dynatrace,debug]
-        metrics:
-          receivers: [otlp]
-          processors: [batch]
-          exporters: [otlphttp/dynatrace]
-        logs:
-          receivers: [otlp]
-          processors: [resource,k8sattributes,batch]
-          exporters: [otlphttp/dynatrace]
