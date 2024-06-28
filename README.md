@@ -164,8 +164,9 @@ Command:
 kubectl get pods -n dynatrace
 ```
 Sample output:
-> NAME                                          READY   STATUS    RESTARTS   AGE\
-> dynatrace-traces-collector-559d5b9d77-ms24p   1/1     Running   0          1m
+| NAME                                       | READY | STATUS  | RESTARTS | AGE |
+|--------------------------------------------|-------|---------|----------|-----|
+| dynatrace-traces-collector-559d5b9d77-ms24p | 1/1   | Running | 0        | 1m  |
 
 ### Export OpenTelemetry data from `astronomy-shop` to OpenTelemetry Collector - Dynatrace Distro
 
@@ -330,8 +331,10 @@ Command:
 kubectl get pods -n dynatrace
 ```
 Sample output:
-> NAME                                          READY   STATUS    RESTARTS   AGE\
-> dynatrace-traces-collector-559d5b9d77-xn84p   1/1     Running   0          1m
+| NAME                                       | READY | STATUS  | RESTARTS | AGE |
+|--------------------------------------------|-------|---------|----------|-----|
+| dynatrace-traces-collector-559d5b9d77-xn84p | 1/1   | Running | 0        | 1m  |
+
 
 ##### OpenTelemetry Traces in Dynatrace with Kubernetes Attributes
 Dynatrace utilizes the `service.name`, `k8s.workload.name` and `k8s.namespace.name` to generate the unified service.\
@@ -363,8 +366,10 @@ Command:
 kubectl get pods -n dynatrace
 ```
 Sample output:
-> NAME                                          READY   STATUS    RESTARTS   AGE\
-> dynatrace-traces-collector-559d5b9d77-rp21d   1/1     Running   0          1m
+| NAME                                       | READY | STATUS  | RESTARTS | AGE |
+|--------------------------------------------|-------|---------|----------|-----|
+| dynatrace-traces-collector-559d5b9d77-rp21d | 1/1   | Running | 0        | 1m  |
+
 
 ##### OpenTelemetry Traces in Dynatrace with GCP/GKE Attributes
 Result:\
@@ -401,8 +406,10 @@ Command:
 kubectl get pods -n dynatrace
 ```
 Sample output:
-> NAME                                          READY   STATUS    RESTARTS   AGE\
-> dynatrace-traces-collector-559d5b9d77-ny98q   1/1     Running   0          1m
+| NAME                                       | READY | STATUS  | RESTARTS | AGE |
+|--------------------------------------------|-------|---------|----------|-----|
+| dynatrace-traces-collector-559d5b9d77-ny98q | 1/1   | Running | 0        | 1m  |
+
 
 ##### OpenTelemetry Traces in Dynatrace with Custom Resource Attributes
 Result:\
