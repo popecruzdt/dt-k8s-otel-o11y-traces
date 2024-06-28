@@ -17,7 +17,8 @@ Lab tasks:
 4. Configure OpenTelemetry Collector service pipeline for span enrichment
 5. Analyze application reliability via traces in Dynatrace
 
-TODO: image
+![dynatrace otel service overview](img/dt_otel_service_overview.png)
+![dynatrace otel service traces](img/dt_otel_service_traces.png)
 
 <!-- -------------------------->
 ## Technical Specification 
@@ -76,9 +77,11 @@ Ingest logs
 Ingest metrics
 Ingest OpenTelemetry traces
 ```
+[See Related Dynatrace API Token Creation Documentation](https://docs.dynatrace.com/docs/dynatrace-api/basics/dynatrace-api-authentication#create-token)
+![dt access token](img/dt_access_token.png)
 
 #### (optional) Import Dashboard into Dynatrace
-[notebook](/k8s-otel-o11y-traces_dt_dashboard.json)
+[dashboard](/k8s-otel-o11y-traces_dt_dashboard.json)
 
 #### Define workshop user variables
 In your GCP CloudShell Terminal:
@@ -222,17 +225,12 @@ config: |
           exporters: [otlphttp/dynatrace]
 ```
 
-##### Query logs in Dynatrace
-DQL:
-```sql
-fetch logs
-| filter isNotNull(log.file.path) and isNotNull(log)
-| sort timestamp desc
-| limit 100
-| fields timestamp, loglevel, status, k8s.namespace.name, k8s.pod.name, k8s.container.name, content, log.file.path
-```
+##### OpenTelemetry Traces in Dynatrace
 Result:\
-![dql_filelog_receiver](img/dql_filelog_receiver.png)
+![dt distributed traces](img/dt_distributed_traces.png)
+![dt trace waterfall](img/dt_trace_waterfall.png)
+![dt trace attributes](img/dt_trace_attributes.png)
+[Refer to the Dynatrace documentation for more details](https://docs.dynatrace.com/docs/observe-and-explore/distributed-traces/analysis/get-started)
 
 ### Configure OpenTelemetry Collector Service Pipeline
 
@@ -332,20 +330,16 @@ Command:
 kubectl get pods -n dynatrace
 ```
 Sample output:
-> NAME                             READY   STATUS    RESTARTS   AGE\
-> dynatrace-logs-collector-dns4x   1/1     Running   0          1m
+> NAME                                          READY   STATUS    RESTARTS   AGE\
+> dynatrace-traces-collector-559d5b9d77-xn84p   1/1     Running   0          1m
 
-##### Query logs in Dynatrace
-DQL:
-```sql
-fetch logs
-| filter k8s.namespace.name == "astronomy-shop" and isNotNull(k8s.deployment.name)
-| sort timestamp desc
-| limit 100
-| fields timestamp, loglevel, status, k8s.namespace.name, k8s.deployment.name, k8s.pod.name, k8s.container.name, app.label.component, content
-```
+##### OpenTelemetry Traces in Dynatrace with Kubernetes Attributes
+Dynatrace utilizes the `service.name`, `k8s.workload.name` and `k8s.namespace.name` to generate the unified service.\
+https://docs.dynatrace.com/docs/platform-modules/applications-and-microservices/services/service-detection-and-naming/service-types/unified-service#service-detection
+
 Result:\
-![dql_k8sattributes_processor](img/dql_k8sattributes_processor.png)
+![dt unified service detection](img/dt_otel_unified_service_namespace.png)
+![dt otel k8sattributes processor](img/dt_otel_k8sattributes_processor.png)
 
 ##### Add `resourcedetection` processor (gcp)
 https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/resourcedetectionprocessor/README.md#gcp-metadata
@@ -369,21 +363,12 @@ Command:
 kubectl get pods -n dynatrace
 ```
 Sample output:
-> NAME                             READY   STATUS    RESTARTS   AGE\
-> dynatrace-logs-collector-fbtk5   1/1     Running   0          1m
+> NAME                                          READY   STATUS    RESTARTS   AGE\
+> dynatrace-traces-collector-559d5b9d77-rp21d   1/1     Running   0          1m
 
-##### Query logs in Dynatrace
-DQL:
-```sql
-fetch logs
-| filter isNotNull(cloud.account.id) and isNotNull(k8s.cluster.name)
-| filter k8s.namespace.name == "astronomy-shop" and isNotNull(k8s.deployment.name)
-| sort timestamp desc
-| limit 100
-| fields timestamp, loglevel, status, cloud.account.id, k8s.cluster.name, k8s.namespace.name, k8s.deployment.name, content
-```
+##### OpenTelemetry Traces in Dynatrace with GCP/GKE Attributes
 Result:\
-![dql_resourcedetection_processor](img/dql_resourcedetection_processor.png)
+![dt otel resourcedetection processor](img/dt_otel_resourcedetection_processor.png)
 
 ##### Add `resource` processor (attributes)
 https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourceprocessor
@@ -397,7 +382,7 @@ processors:
           value: opentelemetry
           action: insert
         - key: dynatrace.otel.collector
-          value: dynatrace-logs
+          value: dynatrace-traces
           action: insert
         - key: dt.security_context
           from_attribute: k8s.cluster.name
@@ -416,19 +401,12 @@ Command:
 kubectl get pods -n dynatrace
 ```
 Sample output:
-> NAME                             READY   STATUS    RESTARTS   AGE\
-> dynatrace-logs-collector-xx6km   1/1     Running   0          1m
+> NAME                                          READY   STATUS    RESTARTS   AGE\
+> dynatrace-traces-collector-559d5b9d77-ny98q   1/1     Running   0          1m
 
-##### Query logs in Dynatrace
-DQL:
-```sql
-fetch logs
-| filter dynatrace.otel.collector == "dynatrace-logs"
-| sort timestamp desc
-| limit 100
-```
+##### OpenTelemetry Traces in Dynatrace with Custom Resource Attributes
 Result:\
-![dql_resource_processor](img/dql_resource_processor.png)
+![dt otel resource processor](img/dt_otel_resource_processor.png)
 
 <!-- ------------------------ -->
 ## Demo The New Functionality
@@ -438,13 +416,13 @@ TODO
 ## Wrap Up
 
 ### What You Learned Today 
-By completing this lab, you've successfully deployed the OpenTelemetry Collector to collect logs, enrich log attributes for better context, and ship those logs to Dynatrace for analysis.
-- The OpenTelemetry Collector was deployed as a DaemonSet, behaving as an Agent running on each Node
-- The Dynatrace Distro of OpenTelemetry Collector includes supported modules needed to ship logs to Dynatrace
-  - The `filelog` receiver scrapes logs from the Node filesystem and parses the contents
-  - The `k8sattributes` processor enriches the logs with Kubernetes attributes
-  - The `resourcedetection` processor enriches the logs with cloud and cluster (GCP/GKE) attributes
-  - The `resource` processor enriches the logs with custom (resource) attributes
+By completing this lab, you've successfully deployed the OpenTelemetry Collector to collect traces, enrich span attributes for better context, and ship those traces/spans to Dynatrace for analysis.
+- The OpenTelemetry Collector was deployed as a Deployment, behaving as a Gateway on the cluster
+- The Dynatrace Distro of OpenTelemetry Collector includes supported modules needed to ship traces to Dynatrace
+  - The `otlp` receiver receives traces (and other signals) from OpenTelemetry exporters via gRPC/HTTP
+  - The `k8sattributes` processor enriches the spans with Kubernetes attributes
+  - The `resourcedetection` processor enriches the spans with cloud and cluster (GCP/GKE) attributes
+  - The `resource` processor enriches the spans with custom (resource) attributes
 - Dynatrace DQL (via Notebooks) allows you to perform powerful queries and analysis of the log data
 
 <!-- ------------------------ -->
