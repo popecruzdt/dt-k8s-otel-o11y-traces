@@ -79,6 +79,9 @@ spec:
         - key: dynatrace.otel.collector
           value: dynatrace-traces
           action: insert
+        - key: dt.security_context
+          from_attribute: k8s.cluster.name
+          action: insert
 
     exporters:
       otlphttp/dynatrace:

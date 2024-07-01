@@ -205,7 +205,7 @@ Sample output:
 > LAST DEPLOYED: Thu Jun 27 20:58:38 2024\
 > NAMESPACE: astronomy-shop\
 > STATUS: deployed\
-> REVISION: 2\
+> REVISION: 2
 
 ##### `otlp` receiver
 https://github.com/open-telemetry/opentelemetry-collector/tree/main/receiver/otlpreceiver
