@@ -1,4 +1,4 @@
-id: dt-k8s-otel-traces-lab
+id: dt-k8s-otel-o11y-traces
 summary: dynatrace otel trace ingest for kubernetes using opentelemetry collector
 author: Tony Pope-Cruz
 
@@ -241,7 +241,7 @@ Result:\
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: otel-collector-k8s-clusterrole
+  name: otel-collector-k8s-clusterrole-traces
 rules:
 - apiGroups: [""]
   resources: ["pods", "namespaces", "nodes"]
@@ -255,10 +255,10 @@ rules:
 ```
 Command:
 ```sh
-kubectl apply -f opentelemetry/rbac/otel-collector-k8s-clusterrole.yaml
+kubectl apply -f opentelemetry/rbac/otel-collector-k8s-clusterrole-traces.yaml
 ```
 Sample output:
-> clusterrole.rbac.authorization.k8s.io/otel-collector-k8s-clusterrole created
+> clusterrole.rbac.authorization.k8s.io/otel-collector-k8s-clusterrole-traces created
 
 ##### Create `clusterrolebinding` for OpenTelemetry Collector service account
 ```yaml
@@ -273,7 +273,7 @@ subjects:
   namespace: dynatrace
 roleRef:
   kind: ClusterRole
-  name: otel-collector-k8s-clusterrole
+  name: otel-collector-k8s-clusterrole-traces
   apiGroup: rbac.authorization.k8s.io
 ```
 Command:
@@ -293,14 +293,20 @@ k8sattributes:
         node_from_env_var: KUBE_NODE_NAME
     extract:
         metadata:
-        - k8s.pod.name
-        - k8s.pod.uid
-        - k8s.deployment.name
-        - k8s.namespace.name
-        - k8s.node.name
-        - container.id
-        - container.image.name
-        - k8s.container.name
+            - k8s.namespace.name
+            - k8s.deployment.name
+            - k8s.daemonset.name
+            - k8s.job.name
+            - k8s.cronjob.name
+            - k8s.replicaset.name
+            - k8s.statefulset.name
+            - k8s.pod.name
+            - k8s.pod.uid
+            - k8s.node.name
+            - k8s.container.name
+            - container.id
+            - container.image.name
+            - container.image.tag
         labels:
         - tag_name: app.label.component
             key: app.kubernetes.io/component
@@ -430,7 +436,7 @@ By completing this lab, you've successfully deployed the OpenTelemetry Collector
   - The `k8sattributes` processor enriches the spans with Kubernetes attributes
   - The `resourcedetection` processor enriches the spans with cloud and cluster (GCP/GKE) attributes
   - The `resource` processor enriches the spans with custom (resource) attributes
-- Dynatrace DQL (via Notebooks) allows you to perform powerful queries and analysis of the log data
+- Dynatrace allows you to perform powerful queries and analysis of the trace/span data
 
 <!-- ------------------------ -->
 ### Supplemental Material

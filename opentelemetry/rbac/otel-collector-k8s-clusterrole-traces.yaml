@@ -2,7 +2,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: otel-collector-k8s-clusterrole
+  name: otel-collector-k8s-clusterrole-traces
 rules:
 - apiGroups: [""]
   resources: ["pods", "namespaces", "nodes"]

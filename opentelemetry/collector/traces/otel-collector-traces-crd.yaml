@@ -1,5 +1,4 @@
 ---
-# apiVersion: opentelemetry.io/v1beta1
 apiVersion: opentelemetry.io/v1alpha1
 kind: OpenTelemetryCollector
 metadata:
@@ -34,16 +33,6 @@ spec:
         send_batch_max_size: 1000
         timeout: 30s
         send_batch_size: 800
-      resource:
-        attributes:
-        - key: k8s.pod.ip
-          action: delete
-        - key: telemetry.sdk.name
-          value: opentelemetry
-          action: insert
-        - key: dynatrace.otel.collector
-          value: dynatrace-traces
-          action: insert
       k8sattributes:
         auth_type: "serviceAccount"
         passthrough: false
@@ -51,14 +40,20 @@ spec:
         #  node_from_env_var: KUBE_NODE_NAME
         extract:
           metadata:
+            - k8s.namespace.name
+            - k8s.deployment.name
+            - k8s.daemonset.name
+            - k8s.job.name
+            - k8s.cronjob.name
+            - k8s.replicaset.name
+            - k8s.statefulset.name
             - k8s.pod.name
             - k8s.pod.uid
-            - k8s.deployment.name
-            - k8s.namespace.name
             - k8s.node.name
+            - k8s.container.name
             - container.id
             - container.image.name
-            - k8s.container.name
+            - container.image.tag
           labels:
             - tag_name: app.label.component
               key: app.kubernetes.io/component
@@ -75,6 +70,23 @@ spec:
           #      name: k8s.pod.ip
           - sources:
               - from: connection
+      resourcedetection/gcp:
+        detectors: [env, gcp]
+        timeout: 2s
+        override: false
+      resource:
+        attributes:
+        - key: k8s.pod.ip
+          action: delete
+        - key: telemetry.sdk.name
+          value: opentelemetry
+          action: insert
+        - key: dynatrace.otel.collector
+          value: dynatrace-traces
+          action: insert
+        - key: dt.security_context
+          from_attribute: k8s.cluster.name
+          action: insert
 
     exporters:
       otlphttp/dynatrace:
@@ -89,19 +101,11 @@ spec:
     service:
       telemetry:
         logs:
-          level: "debug"
+          level: "info"
         metrics:
           level: "detailed"
       pipelines:
         traces:
           receivers: [otlp]
-          processors: [resource,k8sattributes,batch]
+          processors: [k8sattributes,resourcedetection/gcp,resource,batch]
           exporters: [otlphttp/dynatrace,debug]
-        metrics:
-          receivers: [otlp]
-          processors: [batch]
-          exporters: [otlphttp/dynatrace]
-        logs:
-          receivers: [otlp]
-          processors: [resource,k8sattributes,batch]
-          exporters: [otlphttp/dynatrace]

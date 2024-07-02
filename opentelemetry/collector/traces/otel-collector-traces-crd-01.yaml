@@ -1,5 +1,4 @@
 ---
-# apiVersion: opentelemetry.io/v1beta1
 apiVersion: opentelemetry.io/v1alpha1
 kind: OpenTelemetryCollector
 metadata:
@@ -48,7 +47,7 @@ spec:
     service:
       telemetry:
         logs:
-          level: "debug"
+          level: "info"
         metrics:
           level: "detailed"
       pipelines:
