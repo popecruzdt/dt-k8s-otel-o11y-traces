@@ -81,7 +81,6 @@ Ingest OpenTelemetry traces
 ![dt access token](img/dt_access_token.png)
 
 #### (optional) Import Dashboard into Dynatrace
-TODO - dashboard
 [dashboard](/k8s-otel-o11y-traces_dt_dashboard.json)
 
 #### Define workshop user variables
@@ -421,6 +420,9 @@ Sample output:
 ##### OpenTelemetry Traces in Dynatrace with Custom Resource Attributes
 Result:\
 ![dt otel resource processor](img/dt_otel_resource_processor.png)
+
+### Dynatrace Dashboard with Unified Services from OpenTelemetry
+![dashboard](/img/dt_traces_dashboard.png)
 
 <!-- ------------------------ -->
 ## Demo The New Functionality
