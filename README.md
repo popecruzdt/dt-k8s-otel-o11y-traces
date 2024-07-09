@@ -198,7 +198,7 @@ sed -i "s,NAME_TO_REPLACE,$NAME," astronomy-shop/collector-values.yaml
 ### Update `astronomy-shop` OpenTelemetry Collector export endpoint via helm
 Command:
 ```sh
-helm upgrade astronomy-shop open-telemetry/opentelemetry-demo --values astronomy-shop/collector-values.yaml --namespace astronomy-shop
+helm upgrade astronomy-shop open-telemetry/opentelemetry-demo --values astronomy-shop/collector-values.yaml --namespace astronomy-shop --version "0.31.0"
 ```
 Sample output:
 > NAME: astronomy-shop\
