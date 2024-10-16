@@ -27,7 +27,7 @@ Duration: 2
 - [Kind Kubernetes](https://kind.sigs.k8s.io/)
   - tested on Kind v0.24.0
 - [OpenTelemetry Demo astronomy-shop](https://opentelemetry.io/docs/demo/)
-  - tested on release 1.10.0
+  - tested on release 1.10.0, helm chart release 0.31.0
 - [Istio](https://istio.io/latest/docs/)
   - tested on v1.22.1
 - [OpenTelemetry Collector - Dynatrace Distro](https://docs.dynatrace.com/docs/extend-dynatrace/opentelemetry/collector/deployment)
@@ -136,7 +136,7 @@ git clone --single-branch --branch code-spaces https://github.com/popecruzdt/dt-
 #### Move into the base directory
 Command:
 ```sh
-cd dt-k8s-otel-o11y-logs
+cd dt-k8s-otel-o11y-traces
 ```
 
 ### OpenTelemetry Collector - Dynatrace Distro
