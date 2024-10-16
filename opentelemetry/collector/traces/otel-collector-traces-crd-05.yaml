@@ -71,9 +71,18 @@ spec:
           - sources:
               - from: connection
       resourcedetection/gcp:
-        detectors: [env, gcp]
+        # detectors: [env, gcp]
+        detectors: [env]
         timeout: 2s
         override: false
+      resource/kind:
+        attributes:
+        - key: cloud.account.id
+          value: dt-k8s-o11y-account
+          action: insert
+        - key: k8s.cluster.name
+          value: dt-k8s-o11y-kind
+          action: insert
       resource:
         attributes:
         - key: k8s.pod.ip
@@ -113,5 +122,5 @@ spec:
       pipelines:
         traces:
           receivers: [otlp]
-          processors: [filter/static,k8sattributes,resourcedetection/gcp,resource,batch]
+          processors: [filter/static,k8sattributes,resourcedetection/gcp,resource/kind,resource,batch]
           exporters: [otlphttp/dynatrace,debug]
