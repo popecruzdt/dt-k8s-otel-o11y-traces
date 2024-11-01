@@ -2,6 +2,9 @@
 
 ### Add `resourcedetection` processor
 https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/resourcedetectionprocessor/README.md#gcp-metadata
+
+The resource detection processor can be used to detect resource information from the host, in a format that conforms to the OpenTelemetry resource semantic conventions, and append or override the resource value in telemetry data with this information.  Detectors are available for AWS, Azure, GCP, and several other platforms; see the documentation for more details.
+
 ```yaml
 processors:
   resourcedetection/gcp:
@@ -43,4 +46,7 @@ Sample output:
 ### OpenTelemetry Traces in Dynatrace with Cloud Attributes
 Result:
 
+Locate a new trace from the new `checkoutservice` service with a trace/request name of `oteldemo.CheckoutService/PlaceOrder`.  Click on a span to see the new resource attributes that have been added to the span.
+
 ![dt otel resourcedetection processor](../../../assets/images/02-dt_otel_resourcedetection_processor.png)
+** In a real world scenario, `cloud.account.id` may be considered sensitive data; blurred for this reason.

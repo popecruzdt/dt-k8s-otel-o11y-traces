@@ -1,6 +1,15 @@
 ## k8sattributes Processor
 
+### Add Kubernetes Attributes with the `k8sattributes` Processor
+
+The Kubernetes Attributes Processor automatically discovers Kubernetes pods, extracts their metadata, and adds the extracted metadata to spans, metrics, and logs as resource attributes.
+
+The Kubernetes Attributes Processor is one of the most important components for a collector running in Kubernetes. Any collector receiving application data should use it. Because it adds Kubernetes context to your telemetry, the Kubernetes Attributes Processor lets you correlate your application’s traces, metrics, and logs signals with your Kubernetes telemetry, such as pod metrics and traces.
+
 ### Create `clusterrole` with read access to Kubernetes objects
+
+Since the processor uses the Kubernetes API, it needs the correct permission to work correctly. For most use cases, you should give the service account running the collector the following permissions via a ClusterRole.
+
 ```yaml
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -117,5 +126,10 @@ https://docs.dynatrace.com/docs/platform-modules/applications-and-microservices/
 
 Result:
 
+With the additional Kubernetes attributes attached to the spans, Dynatrace will detect new unified services.
+
 ![dt unified service detection](../../../assets/images/02-dt_otel_unified_service_namespace.png)
+
+Locate a new trace from the new `checkoutservice` service with a trace/request name of `oteldemo.CheckoutService/PlaceOrder`.  Click on a span to see the new resource attributes that have been added to the span.
+
 ![dt otel k8sattributes processor](../../../assets/images/02-dt_otel_k8sattributes_processor.png)
